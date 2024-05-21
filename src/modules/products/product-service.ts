@@ -6,13 +6,13 @@ const createProductService = async (v: Product) => {
   return result;
 };
 
-const readAllProductService = () => {
-  const result = ProductModel.find().select({ __v: 0 });
+const readAllProductService = async () => {
+  const result = await ProductModel.find().select({ __v: 0 });
   return result;
 };
 
-const readSpecificProduct = (v: string) => {
-  const result = ProductModel.findById(v).select({
+const readSpecificProduct = async (v: string) => {
+  const result = await ProductModel.findById(v).select({
     _id: 0,
     'inventory._id': 0,
     'variants._id': 0,
@@ -20,13 +20,18 @@ const readSpecificProduct = (v: string) => {
   return result;
 };
 
-const updateSpecificProduct = (v1: string, v2: number) => {
+const updateSpecificProduct = async (v1: string, v2: number) => {
   const newQuantity = v2;
-  const result = ProductModel.findByIdAndUpdate(
+  const result = await ProductModel.findByIdAndUpdate(
     v1,
     { 'inventory.quantity': newQuantity },
     { new: true },
   ).select({ _id: 0, 'inventory._id': 0, 'variants._id': 0 });
+  return result;
+};
+
+const deleteSpecificProduct = async (v: string) => {
+  const result = await ProductModel.findOneAndDelete({ _id: v });
   return result;
 };
 
@@ -35,4 +40,5 @@ export const ProductService = {
   readAllProductService,
   readSpecificProduct,
   updateSpecificProduct,
+  deleteSpecificProduct,
 };
