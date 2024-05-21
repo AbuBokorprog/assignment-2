@@ -43,6 +43,6 @@ const productSchema = new mongoose.Schema<Product>({
   inventory: Inventory,
 });
 
-const Products = mongoose.model('Product', productSchema);
+const Products = mongoose.model<Product>('Product', productSchema);
 
 export { Products };

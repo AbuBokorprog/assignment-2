@@ -5,7 +5,6 @@ const OrdersSchema = new mongoose.Schema<Order>({
   email: {
     type: String,
     required: true,
-    unique: true,
   },
   productId: {
     type: String,
@@ -22,4 +21,4 @@ const OrdersSchema = new mongoose.Schema<Order>({
   },
 });
 
-export const Orders = mongoose.model('Order', OrdersSchema);
+export const Orders = mongoose.model<Order>('Order', OrdersSchema);
