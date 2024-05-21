@@ -3,17 +3,19 @@ interface Variants {
   value: string;
 }
 
+interface Inventory {
+  quantity: number;
+  inStock: boolean;
+}
+
 interface Product {
   name: string;
   description: string;
   price: number;
   category: string;
-  tags: Array<string>;
+  tags: string[];
   variants: Array<Variants>;
-  inventory: {
-    quantity: number;
-    inStock: boolean;
-  };
+  inventory: Inventory;
 }
 
-export { Product };
+export { Product, Variants, Inventory };

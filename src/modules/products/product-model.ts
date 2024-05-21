@@ -1,43 +1,45 @@
 import mongoose from 'mongoose';
-import { array } from 'zod';
+import { Inventory, Product, Variants } from './product.interface';
 
-const Variants = [
-  {
-    type: {
-      type: String,
-    },
-    value: {
-      type: String,
-    },
+const Variants = new mongoose.Schema<Variants>({
+  type: {
+    type: String,
+    required: true,
   },
-];
+  value: {
+    type: String,
+    required: true,
+  },
+});
 
-const productSchema = new mongoose.Schema({
+const Inventory = new mongoose.Schema<Inventory>({
+  quantity: Number,
+  inStock: Boolean,
+});
+
+const productSchema = new mongoose.Schema<Product>({
   name: {
     type: String,
-    require: true,
+    required: true,
   },
   description: String,
   price: {
     type: Number,
-    require: true,
+    required: true,
   },
   category: {
     type: String,
-    require: true,
+    required: true,
   },
   tags: {
-    type: array,
+    type: [String],
+    required: true,
   },
-  variants: Variants,
-  inventory: {
-    quantity: {
-      type: Number,
-    },
-    inStock: {
-      type: String,
-    },
+  variants: {
+    type: [Variants],
+    required: true,
   },
+  inventory: Inventory,
 });
 
 const Product = mongoose.model('Product', productSchema);
