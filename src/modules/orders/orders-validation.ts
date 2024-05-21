@@ -7,4 +7,8 @@ const OrderZodSchema = z.object({
   quantity: z.number(),
 });
 
-export { OrderZodSchema };
+const byEmail = z.object({
+  email: z.string().email().optional(),
+});
+
+export { OrderZodSchema, byEmail };

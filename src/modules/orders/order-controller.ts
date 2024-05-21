@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { OrderService } from './order-service';
-import { OrderZodSchema } from './orders-validation';
+import { byEmail, OrderZodSchema } from './orders-validation';
 
 const createOrder = async (req: Request, res: Response) => {
   const orderData = req.body;
@@ -23,14 +23,28 @@ const createOrder = async (req: Request, res: Response) => {
   }
 };
 const retrieveAllOrder = async (req: Request, res: Response) => {
-  const data = await OrderService.retrieveAllOrder();
+  const query = byEmail.parse(req?.query);
 
   try {
-    res.status(200).json({
-      success: true,
-      message: 'Orders fetched successfully!',
-      data,
-    });
+    let emailQuery = {};
+    if (query?.email) {
+      emailQuery = {
+        email: { $regex: query.email, $options: 'i' },
+      };
+      const data = await OrderService.retrieveAllOrder(emailQuery);
+      res.status(200).json({
+        success: true,
+        message: 'Orders fetched successfully!',
+        data,
+      });
+    } else {
+      const data = await OrderService.retrieveAllOrder();
+      res.status(200).json({
+        success: true,
+        message: 'Orders fetched successfully!',
+        data,
+      });
+    }
   } catch (error) {
     res.status(200).json({
       success: false,
