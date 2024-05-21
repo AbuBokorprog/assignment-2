@@ -4,7 +4,6 @@ import { byEmail, OrderZodSchema } from './orders-validation';
 
 const createOrder = async (req: Request, res: Response) => {
   const orderData = req.body;
-
   const order = OrderZodSchema.parse(orderData);
 
   const data = await OrderService.createOrder(order);

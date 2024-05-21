@@ -8,8 +8,6 @@ const OrdersSchema = new mongoose.Schema<Order>({
   },
   productId: {
     type: String,
-    required: true,
-    unique: true,
   },
   price: {
     type: Number,
@@ -21,4 +19,4 @@ const OrdersSchema = new mongoose.Schema<Order>({
   },
 });
 
-export const Orders = mongoose.model<Order>('Order', OrdersSchema);
+export const Orders = mongoose.model('Order', OrdersSchema);

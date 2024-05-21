@@ -1,9 +1,30 @@
+import { Products } from '../products/product-model';
 import { Order } from './order-interface';
 import { Orders } from './order-model';
 
 const createOrder = async (v: Order) => {
-  const result = await Orders.create(v);
-  return result;
+  const product = await Products.findById(v.productId);
+
+  if (product) {
+    if (
+      product?.inventory?.quantity > v?.quantity &&
+      product?.inventory?.quantity !== 0
+    ) {
+      product.inventory.quantity = product.inventory.quantity - v.quantity;
+      product.inventory.inStock = true;
+      await product.save();
+      const data = await Orders.create(v);
+      return data;
+    } else {
+      product.inventory.inStock = false;
+      const error = 'insufficient stock';
+      await product.save();
+      return error;
+    }
+  } else {
+    const error = 'This Id is invalid';
+    return error;
+  }
 };
 
 const retrieveAllOrder = async (v?: object) => {
