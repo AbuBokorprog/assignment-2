@@ -11,13 +11,13 @@ const readAllProductService = () => {
   return result;
 };
 
-// const readSpecificProduct = (v: string) => {
-//   const result = ProductModel.findById(v);
-//   return result;
-// };
+const readSpecificProduct = (v: string) => {
+  const result = ProductModel.findById(v);
+  return result;
+};
 
 export const ProductService = {
   createProductService,
   readAllProductService,
-  //   readSpecificProduct,
+  readSpecificProduct,
 };
