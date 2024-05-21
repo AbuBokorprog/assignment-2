@@ -20,8 +20,41 @@ const productCreate = async (req: Request, res: Response) => {
   }
 };
 
-const productData = (req: Request, res: Response) => {
-  res.send('Product data');
+const productData = async (req: Request, res: Response) => {
+  const data = await ProductService.readAllProductService();
+  try {
+    res.status(200).json({
+      success: true,
+      message: 'Products fetched successfully!',
+      data,
+    });
+  } catch (error) {
+    res.status(200).json({
+      success: false,
+      message: error,
+    });
+  }
 };
 
-export const productController = { productCreate, productData };
+// const specificProductData = async (req: Request, res: Response) => {
+//   const id = req.params.productId;
+//   const data = await ProductService.readSpecificProduct(id);
+//   try {
+//     res.status(200).json({
+//       success: true,
+//       message: 'Product fetched successfully!',
+//       data,
+//     });
+//   } catch (error) {
+//     res.status(404).json({
+//       success: false,
+//       message: error,
+//     });
+//   }
+// };
+
+export const productController = {
+  productCreate,
+  productData,
+  //   specificProductData,
+};

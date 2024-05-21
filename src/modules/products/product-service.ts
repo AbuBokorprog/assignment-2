@@ -6,8 +6,18 @@ const createProductService = async (v: Product) => {
   return result;
 };
 
-const readAllProductService = (v: Product) => {
-  console.log(v);
+const readAllProductService = () => {
+  const result = ProductModel.find();
+  return result;
 };
 
-export const ProductService = { createProductService, readAllProductService };
+// const readSpecificProduct = (v: string) => {
+//   const result = ProductModel.findById(v);
+//   return result;
+// };
+
+export const ProductService = {
+  createProductService,
+  readAllProductService,
+  //   readSpecificProduct,
+};
