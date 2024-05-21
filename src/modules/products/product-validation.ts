@@ -20,4 +20,8 @@ const ProductSchema = z.object({
   inventory: InventorySchema,
 });
 
-export { ProductSchema };
+const searchQuerySchema = z.object({
+  searchTerm: z.string().optional(),
+});
+
+export { ProductSchema, searchQuerySchema };

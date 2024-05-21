@@ -1,10 +1,11 @@
 import express from 'express';
 import { productController } from './product-controller';
-const route = express.Router();
+const router = express.Router();
 
-route.post('/', productController.productCreate);
-route.get('/', productController.productData);
-route.get('/:productId', productController.specificProductData);
-route.put('/:productId', productController.updateSpecificProduct);
-route.delete('/:productId', productController.deleteSpecificProduct);
-export const productRoutes = route;
+router.post('/', productController.productCreate);
+router.get('/', productController.productData);
+router.get('/:productId', productController.specificProductData);
+router.put('/:productId', productController.updateSpecificProduct);
+router.delete('/:productId', productController.deleteSpecificProduct);
+// router.get('/?searchTerm=iphone', productController.findSearchProducts);
+export const productRoutes = router;

@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ProductService } from './product-service';
-import { ProductSchema } from './product-validation';
+import { ProductSchema, searchQuerySchema } from './product-validation';
 
 const productCreate = async (req: Request, res: Response) => {
   try {
@@ -21,17 +21,33 @@ const productCreate = async (req: Request, res: Response) => {
 };
 
 const productData = async (req: Request, res: Response) => {
-  const data = await ProductService.readAllProductService();
   try {
-    res.status(200).json({
-      success: true,
-      message: 'Products fetched successfully!',
-      data,
-    });
-  } catch (error) {
+    const query = searchQuerySchema.parse(req.query);
+
+    let searchQuery = {};
+    if (query?.searchTerm) {
+      searchQuery = {
+        name: { $regex: query.searchTerm, $options: 'i' },
+      };
+
+      const data = await ProductService.readAllProductService(searchQuery);
+      res.status(200).json({
+        success: true,
+        message: "Products matching search term 'iphone' fetched successfully!",
+        data,
+      });
+    } else {
+      const data = await ProductService.readAllProductService();
+      res.status(200).json({
+        success: true,
+        message: 'Products fetched successfully!',
+        data,
+      });
+    }
+  } catch (error: unknown) {
     res.status(200).json({
       success: false,
-      message: error,
+      message: error as string,
     });
   }
 };
@@ -45,10 +61,10 @@ const specificProductData = async (req: Request, res: Response) => {
       message: 'Product fetched successfully!',
       data,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     res.status(404).json({
       success: false,
-      message: error,
+      message: error as string,
     });
   }
 };
@@ -63,27 +79,35 @@ const updateSpecificProduct = async (req: Request, res: Response) => {
       message: 'Product updated successfully!',
       data,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     res.status(404).json({
       success: false,
-      message: error,
+      message: error as string,
     });
   }
 };
 
 const deleteSpecificProduct = async (req: Request, res: Response) => {
   const { productId } = req.params;
-  const data = await ProductService.deleteSpecificProduct(productId);
+  let data = await ProductService.deleteSpecificProduct(productId);
   try {
-    res.status(200).json({
-      success: true,
-      message: 'Product deleted successfully!',
-      data,
-    });
-  } catch (error) {
+    if (data) {
+      data = null;
+      res.status(200).json({
+        success: true,
+        message: 'Product deleted successfully!',
+        data,
+      });
+    } else {
+      res.status(404).json({
+        success: false,
+        message: "The product couldn't find ",
+      });
+    }
+  } catch (error: unknown) {
     res.status(404).json({
       success: false,
-      message: error,
+      message: error as string,
     });
   }
 };

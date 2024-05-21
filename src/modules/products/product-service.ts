@@ -1,4 +1,4 @@
-import { Product as ProductModel } from './product-model';
+import { Products as ProductModel } from './product-model';
 import { Product } from './product.interface';
 
 const createProductService = async (v: Product) => {
@@ -6,9 +6,22 @@ const createProductService = async (v: Product) => {
   return result;
 };
 
-const readAllProductService = async () => {
-  const result = await ProductModel.find().select({ __v: 0 });
-  return result;
+const readAllProductService = async (v?: object) => {
+  if (v) {
+    const result = await ProductModel.find(v).select({
+      __v: 0,
+      'inventory._id': 0,
+      'variants._id': 0,
+    });
+    return result;
+  } else {
+    const result = await ProductModel.find().select({
+      __v: 0,
+      'inventory._id': 0,
+      'variants._id': 0,
+    });
+    return result;
+  }
 };
 
 const readSpecificProduct = async (v: string) => {
@@ -16,6 +29,7 @@ const readSpecificProduct = async (v: string) => {
     _id: 0,
     'inventory._id': 0,
     'variants._id': 0,
+    __v: 0,
   });
   return result;
 };
