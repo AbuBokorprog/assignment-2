@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { ProductService } from './product-service';
 import { ProductSchema, searchQuerySchema } from './product-validation';
+import mongoose from 'mongoose';
 
 const productCreate = async (req: Request, res: Response) => {
   try {
@@ -27,15 +28,26 @@ const productData = async (req: Request, res: Response) => {
     let searchQuery = {};
     if (query?.searchTerm) {
       searchQuery = {
-        name: { $regex: query.searchTerm, $options: 'i' },
+        $or: [
+          { name: { $regex: query?.searchTerm, $options: 'i' } },
+          { description: { $regex: query?.searchTerm, $options: 'i' } },
+          { category: { $regex: query?.searchTerm, $options: 'i' } },
+          { tags: { $regex: query?.searchTerm, $options: 'i' } },
+        ],
       };
-
       const data = await ProductService.readAllProductService(searchQuery);
-      res.status(200).json({
-        success: true,
-        message: "Products matching search term 'iphone' fetched successfully!",
-        data,
-      });
+      if (data.length > 0) {
+        res.status(200).json({
+          success: true,
+          message: `Products matching search term ${query?.searchTerm} fetched successfully!`,
+          data,
+        });
+      } else {
+        res.status(500).json({
+          success: false,
+          message: `Products matching search term ${query?.searchTerm} not found`,
+        });
+      }
     } else {
       const data = await ProductService.readAllProductService();
       res.status(200).json({
@@ -53,9 +65,19 @@ const productData = async (req: Request, res: Response) => {
 };
 
 const specificProductData = async (req: Request, res: Response) => {
-  const id = req.params.productId;
-  const data = await ProductService.readSpecificProduct(id);
+  const { productId } = req.params;
+
   try {
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      res.status(500).json({ success: false, message: 'Invalid product ID' });
+    }
+    const data = await ProductService.readSpecificProduct(productId);
+    if (!data) {
+      res.status(404).json({
+        success: false,
+        message: 'Product not found!',
+      });
+    }
     res.status(200).json({
       success: true,
       message: 'Product fetched successfully!',

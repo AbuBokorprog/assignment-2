@@ -32,7 +32,7 @@ const retrieveAllOrder = async (v?: object) => {
     const result = await Orders.find(v).select({ _id: 0, __v: 0 });
     return result;
   } else {
-    const result = await Orders.find().select({ _id: 0, __v: 0 });
+    const result = await Orders.find();
     return result;
   }
 };

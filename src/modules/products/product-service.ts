@@ -38,7 +38,7 @@ const updateSpecificProduct = async (v1: string, v2: number) => {
   const newQuantity = v2;
   const result = await ProductModel.findByIdAndUpdate(
     v1,
-    { 'inventory.quantity': newQuantity },
+    { $inc: { 'inventory.quantity': -newQuantity } },
     { new: true },
   ).select({ _id: 0, 'inventory._id': 0, 'variants._id': 0 });
   return result;

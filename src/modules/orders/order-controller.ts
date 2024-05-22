@@ -9,11 +9,18 @@ const createOrder = async (req: Request, res: Response) => {
   const data = await OrderService.createOrder(order);
 
   try {
-    res.status(200).json({
-      success: true,
-      message: 'Order created successfully!',
-      data,
-    });
+    if (typeof data == 'string') {
+      res.status(200).json({
+        success: false,
+        message: data,
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: 'Order created successfully!',
+        data,
+      });
+    }
   } catch (error: unknown) {
     res.status(200).json({
       success: false,
@@ -21,6 +28,7 @@ const createOrder = async (req: Request, res: Response) => {
     });
   }
 };
+
 const retrieveAllOrder = async (req: Request, res: Response) => {
   const query = byEmail.parse(req?.query);
 
