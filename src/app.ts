@@ -29,6 +29,7 @@ app.use(
     } else {
       res.send('There was an error');
     }
+    next();
   },
 );
 
