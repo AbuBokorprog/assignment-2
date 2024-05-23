@@ -3,9 +3,11 @@ import { Order } from './order-interface';
 import { Orders } from './order-model';
 
 const createOrder = async (v: Order) => {
+  // find product by id
   const product = await Products.findById(v.productId);
-
+  // if have product
   if (product) {
+    // if product quantity is greater then order quantity and greater than zeo create order and decrement product quantity
     if (
       product?.inventory?.quantity > v?.quantity &&
       product?.inventory?.quantity !== 0
@@ -16,6 +18,7 @@ const createOrder = async (v: Order) => {
       const data = await Orders.create(v);
       return data;
     } else {
+      // if product quantity zero or less than order quantity give a error and inStock will be false.
       product.inventory.inStock = false;
       const error = 'insufficient stock';
       await product.save();

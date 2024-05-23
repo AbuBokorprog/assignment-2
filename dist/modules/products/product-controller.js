@@ -7,6 +7,7 @@ exports.productController = void 0;
 const product_service_1 = require("./product-service");
 const product_validation_1 = require("./product-validation");
 const mongoose_1 = __importDefault(require("mongoose"));
+// create product controller
 const productCreate = async (req, res) => {
     try {
         const product = req.body;
@@ -25,10 +26,12 @@ const productCreate = async (req, res) => {
         });
     }
 };
+// retrieve all products or retrieve search terms controller
 const productData = async (req, res) => {
     try {
         const query = product_validation_1.searchQuerySchema.parse(req.query);
         let searchQuery = {};
+        // if searchTerm query have then retrieve products by searchTerm
         if (query?.searchTerm) {
             searchQuery = {
                 $or: [
@@ -39,21 +42,23 @@ const productData = async (req, res) => {
                 ],
             };
             const data = await product_service_1.ProductService.readAllProductService(searchQuery);
+            // if data is greater than zero retrieve products by searchTerm
             if (data.length > 0) {
                 res.status(200).json({
                     success: true,
-                    message: `Products matching search term ${query?.searchTerm} fetched successfully!`,
+                    message: `Products matching search term '${query?.searchTerm}' fetched successfully!`,
                     data,
                 });
             }
             else {
                 res.status(500).json({
                     success: false,
-                    message: `Products matching search term ${query?.searchTerm} not found`,
+                    message: `Products matching search term '${query?.searchTerm}' not found`,
                 });
             }
         }
         else {
+            // Retrieve all products
             const data = await product_service_1.ProductService.readAllProductService();
             res.status(200).json({
                 success: true,
@@ -69,6 +74,7 @@ const productData = async (req, res) => {
         });
     }
 };
+// Retrieve specific product controller
 const specificProductData = async (req, res) => {
     const { productId } = req.params;
     try {
@@ -76,7 +82,7 @@ const specificProductData = async (req, res) => {
             res.status(500).json({ success: false, message: 'Invalid product ID' });
         }
         const data = await product_service_1.ProductService.readSpecificProduct(productId);
-        if (!data) {
+        if (!data?.name) {
             res.status(404).json({
                 success: false,
                 message: 'Product not found!',
@@ -95,11 +101,22 @@ const specificProductData = async (req, res) => {
         });
     }
 };
+// update specific product controller
 const updateSpecificProduct = async (req, res) => {
     const id = req.params.productId;
     const { updateData } = req.body;
-    const data = await product_service_1.ProductService.updateSpecificProduct(id, updateData);
     try {
+        // check id validate or not
+        if (!mongoose_1.default.Types.ObjectId.isValid(req.params.productId)) {
+            res.status(500).json({ success: false, message: 'Invalid product ID' });
+        }
+        const data = await product_service_1.ProductService.updateSpecificProduct(id, updateData);
+        if (!data?.name) {
+            res.status(200).json({
+                success: true,
+                message: 'Product not found!',
+            });
+        }
         res.status(200).json({
             success: true,
             message: 'Product updated successfully!',
@@ -113,10 +130,15 @@ const updateSpecificProduct = async (req, res) => {
         });
     }
 };
+// delete specific product controller
 const deleteSpecificProduct = async (req, res) => {
     const { productId } = req.params;
-    let data = await product_service_1.ProductService.deleteSpecificProduct(productId);
     try {
+        // check id validate or not
+        if (!mongoose_1.default.Types.ObjectId.isValid(req.params.productId)) {
+            res.status(500).json({ success: false, message: 'Invalid product ID' });
+        }
+        let data = await product_service_1.ProductService.deleteSpecificProduct(productId);
         if (data) {
             data = null;
             res.status(200).json({
@@ -128,7 +150,7 @@ const deleteSpecificProduct = async (req, res) => {
         else {
             res.status(404).json({
                 success: false,
-                message: "The product couldn't find ",
+                message: 'The product not found!',
             });
         }
     }

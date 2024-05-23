@@ -4,8 +4,11 @@ exports.OrderService = void 0;
 const product_model_1 = require("../products/product-model");
 const order_model_1 = require("./order-model");
 const createOrder = async (v) => {
+    // find product by id
     const product = await product_model_1.Products.findById(v.productId);
+    // if have product
     if (product) {
+        // if product quantity is greater then order quantity and greater than zeo create order and decrement product quantity
         if (product?.inventory?.quantity > v?.quantity &&
             product?.inventory?.quantity !== 0) {
             product.inventory.quantity = product.inventory.quantity - v.quantity;
@@ -15,6 +18,7 @@ const createOrder = async (v) => {
             return data;
         }
         else {
+            // if product quantity zero or less than order quantity give a error and inStock will be false.
             product.inventory.inStock = false;
             const error = 'insufficient stock';
             await product.save();

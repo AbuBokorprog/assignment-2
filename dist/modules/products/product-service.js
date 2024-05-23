@@ -35,7 +35,9 @@ const readSpecificProduct = async (v) => {
 };
 const updateSpecificProduct = async (v1, v2) => {
     const newQuantity = v2;
-    const result = await product_model_1.Products.findByIdAndUpdate(v1, { $inc: { 'inventory.quantity': -newQuantity } }, { new: true }).select({ _id: 0, 'inventory._id': 0, 'variants._id': 0 });
+    const result = await product_model_1.Products.findByIdAndUpdate(v1, 
+    // decrement quantity
+    { $inc: { 'inventory.quantity': -newQuantity } }, { new: true }).select({ _id: 0, 'inventory._id': 0, 'variants._id': 0 });
     return result;
 };
 const deleteSpecificProduct = async (v) => {
